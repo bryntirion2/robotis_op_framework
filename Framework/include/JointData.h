@@ -15,7 +15,7 @@ namespace Robot
 	{
 	public:
 		enum
-		{
+		{   // Troody
 			ID_R_SHOULDER_PITCH     = 1,
 			ID_L_SHOULDER_PITCH     = 2,
 			ID_R_SHOULDER_ROLL      = 3,
