@@ -36,7 +36,7 @@ namespace Robot
 			ID_L_ANKLE_ROLL         = 18,
 			ID_HEAD_PAN             = 19,
 			ID_HEAD_TILT            = 20,  // also tail_pan
-			// tail_tilt = 21
+			ID_TAIL_PAN             = 21,
 			
 			NUMBER_OF_JOINTS  // wont use this
 		};
