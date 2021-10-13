@@ -51,11 +51,11 @@ Walking::Walking()
 	A_MOVE_AMPLITUDE = 0;	
 	A_MOVE_AIM_ON = false;
 	BALANCE_ENABLE = true;
-
+// if Darwin
 	m_Joint.SetAngle(JointData::ID_R_SHOULDER_PITCH, -48.345);
 	m_Joint.SetAngle(JointData::ID_L_SHOULDER_PITCH, 41.313);
 	m_Joint.SetAngle(JointData::ID_R_SHOULDER_ROLL, -17.873);
-    m_Joint.SetAngle(JointData::ID_L_SHOULDER_ROLL, 17.580);
+        m_Joint.SetAngle(JointData::ID_L_SHOULDER_ROLL, 17.580);
 	m_Joint.SetAngle(JointData::ID_R_ELBOW, 29.300);
 	m_Joint.SetAngle(JointData::ID_L_ELBOW, -29.593);
 
@@ -75,6 +75,7 @@ Walking::Walking()
     m_Joint.SetPGain(JointData::ID_L_SHOULDER_ROLL, 8);
     m_Joint.SetPGain(JointData::ID_R_ELBOW, 8);
     m_Joint.SetPGain(JointData::ID_L_ELBOW, 8);
+    // end if Darwin
 }
 
 Walking::~Walking()
@@ -83,7 +84,7 @@ Walking::~Walking()
 
 void Walking::LoadINISettings(minIni* ini)
 {
-    LoadINISettings(ini, WALKING_SECTION);
+    LoadINISettings(ini, WALKING_SECTION); // Robot Select
 }
 void Walking::LoadINISettings(minIni* ini, const std::string &section)
 {
@@ -360,12 +361,14 @@ void Walking::Process()
     double x_move_l, y_move_l, z_move_l, a_move_l, b_move_l, c_move_l;
     double pelvis_offset_r, pelvis_offset_l;
     double angle[14], ep[12];
-	double offset;
-	double TIME_UNIT = MotionModule::TIME_UNIT;
-	//                     R_HIP_YAW, R_HIP_ROLL, R_HIP_PITCH, R_KNEE, R_ANKLE_PITCH, R_ANKLE_ROLL, L_HIP_YAW, L_HIP_ROLL, L_HIP_PITCH, L_KNEE, L_ANKLE_PITCH, L_ANKLE_ROLL, R_ARM_SWING, L_ARM_SWING
-	int dir[14]          = {   -1,        -1,          1,         1,         -1,            1,          -1,        -1,         -1,         -1,         1,            1,           1,           -1      };
+    double offset;
+    double TIME_UNIT = MotionModule::TIME_UNIT;
+	
+    // **** Robot Select
+    //                     R_HIP_YAW, R_HIP_ROLL, R_HIP_PITCH, R_KNEE, R_ANKLE_PITCH, R_ANKLE_ROLL, L_HIP_YAW, L_HIP_ROLL, L_HIP_PITCH, L_KNEE, L_ANKLE_PITCH, L_ANKLE_ROLL, R_ARM_SWING, L_ARM_SWING
+    int dir[14]          = {   -1,        -1,          1,         1,         -1,            1,          -1,        -1,         -1,         -1,         1,            1,           1,           -1      };
     double initAngle[14] = {   0.0,       0.0,        0.0,       0.0,        0.0,          0.0,         0.0,       0.0,        0.0,        0.0,       0.0,          0.0,       -48.345,       41.313    };
-	int outValue[14];
+    int outValue[14];
 
     // Update walk parameters
     if(m_Time == 0)
@@ -521,7 +524,7 @@ void Walking::Process()
         m_Body_Swing_Z = ep[2];
     }
 	m_Body_Swing_Z -= Kinematics::LEG_LENGTH;
-
+ // **** Robot Select
     // Compute arm swing
     if(m_X_Move_Amplitude == 0)
     {
@@ -556,7 +559,7 @@ void Walking::Process()
     // Compute motor value
     for(int i=0; i<14; i++)
     {
-		offset = (double)dir[i] * angle[i] * MX28::RATIO_ANGLE2VALUE;
+	offset = (double)dir[i] * angle[i] * MX28::RATIO_ANGLE2VALUE;
         if(i == 1) // R_HIP_ROLL
             offset += (double)dir[i] * pelvis_offset_r;
         else if(i == 7) // L_HIP_ROLL
@@ -570,8 +573,8 @@ void Walking::Process()
     // adjust balance offset
     if(BALANCE_ENABLE == true)
     {
-		double rlGyroErr = MotionStatus::RL_GYRO;
-		double fbGyroErr = MotionStatus::FB_GYRO;
+	double rlGyroErr = MotionStatus::RL_GYRO;
+	double fbGyroErr = MotionStatus::FB_GYRO;
 #ifdef MX28_1024
         outValue[1] += (int)(dir[1] * rlGyroErr * BALANCE_HIP_ROLL_GAIN); // R_HIP_ROLL
         outValue[7] += (int)(dir[7] * rlGyroErr * BALANCE_HIP_ROLL_GAIN); // L_HIP_ROLL
@@ -585,16 +588,16 @@ void Walking::Process()
         outValue[5] -= (int)(dir[5] * rlGyroErr * BALANCE_ANKLE_ROLL_GAIN); // R_ANKLE_ROLL
         outValue[11] -= (int)(dir[11] * rlGyroErr * BALANCE_ANKLE_ROLL_GAIN); // L_ANKLE_ROLL
 #else
-		outValue[1] += (int)(dir[1] * rlGyroErr * BALANCE_HIP_ROLL_GAIN*4); // R_HIP_ROLL
+	outValue[1] += (int)(dir[1] * rlGyroErr * BALANCE_HIP_ROLL_GAIN*4); // R_HIP_ROLL
         outValue[7] += (int)(dir[7] * rlGyroErr * BALANCE_HIP_ROLL_GAIN*4); // L_HIP_ROLL
 
         outValue[3] -= (int)(dir[3] * fbGyroErr * BALANCE_KNEE_GAIN*4); // R_KNEE
         outValue[9] -= (int)(dir[9] * fbGyroErr * BALANCE_KNEE_GAIN*4); // L_KNEE
 
-		outValue[4] -= (int)(dir[4] * fbGyroErr * BALANCE_ANKLE_PITCH_GAIN*4); // R_ANKLE_PITCH
+	outValue[4] -= (int)(dir[4] * fbGyroErr * BALANCE_ANKLE_PITCH_GAIN*4); // R_ANKLE_PITCH
         outValue[10] -= (int)(dir[10] * fbGyroErr * BALANCE_ANKLE_PITCH_GAIN*4); // L_ANKLE_PITCH
 
-		outValue[5] -= (int)(dir[5] * rlGyroErr * BALANCE_ANKLE_ROLL_GAIN*4); // R_ANKLE_ROLL
+	outValue[5] -= (int)(dir[5] * rlGyroErr * BALANCE_ANKLE_ROLL_GAIN*4); // R_ANKLE_ROLL
         outValue[11] -= (int)(dir[11] * rlGyroErr * BALANCE_ANKLE_ROLL_GAIN*4); // L_ANKLE_ROLL
 #endif
     }
