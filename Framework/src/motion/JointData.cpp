@@ -13,14 +13,14 @@ using namespace Robot;
 
 JointData::JointData()
 {
-    // JOINT_NUMBER_START
+    // Move to Robots
     if ROBOT_NAME == Darwin {
-	START_JOINT = 1;
-	END_JOINT = 20;
+	Robots::START_JOINT = 1;
+	Robots::END_JOINT = 20;
     }
     else {
-	START_JOINT = 7;
-	END_JOINT = 21;
+	Robots::START_JOINT = 7;
+	Robots::END_JOINT = 21;
     }
 	
     for(int i=0; i<NUMBER_OF_JOINTS; i++)
