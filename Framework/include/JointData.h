@@ -21,7 +21,7 @@ namespace Robot
 			ID_R_SHOULDER_ROLL      = 3,
 			ID_L_SHOULDER_ROLL      = 4,
 			ID_R_ELBOW              = 5,
-			ID_L_ELBOW              = 6,
+			ID_L_ELBOW              = 6,// 
 			ID_R_HIP_YAW            = 7,
 			ID_L_HIP_YAW            = 8,
 			ID_R_HIP_ROLL           = 9,
@@ -35,8 +35,10 @@ namespace Robot
 			ID_R_ANKLE_ROLL         = 17,
 			ID_L_ANKLE_ROLL         = 18,
 			ID_HEAD_PAN             = 19,
-			ID_HEAD_TILT            = 20,
-			NUMBER_OF_JOINTS
+			ID_HEAD_TILT            = 20,  // also tail_pan
+			// tail_tilt = 21
+			
+			NUMBER_OF_JOINTS  // wont use this
 		};
 
 		enum
