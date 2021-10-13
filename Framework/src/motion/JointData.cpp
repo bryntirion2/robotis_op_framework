@@ -13,6 +13,9 @@ using namespace Robot;
 
 JointData::JointData()
 {
+    // JOINT_NUMBER_START
+    // JOINT_NUMBER_END WAS... NUMBER_OF_JOINTS	
+
     for(int i=0; i<NUMBER_OF_JOINTS; i++)
     {
         m_Enable[i] = true;
@@ -61,7 +64,7 @@ void JointData::SetEnableRightArmOnly(bool enable)
 
 void JointData::SetEnableRightArmOnly(bool enable, bool exclusive)
 {
-    SetEnable(ID_R_SHOULDER_PITCH,  enable, exclusive);
+    SetEnable(ID_R_SHOULDER_PITCH,  enable, exclusive);k
     SetEnable(ID_R_SHOULDER_ROLL,   enable, exclusive);
     SetEnable(ID_R_ELBOW,           enable, exclusive);
 }
